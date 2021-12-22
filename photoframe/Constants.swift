@@ -41,11 +41,18 @@ struct Constants
             return BASEURL + "user/send_forgot_password_code"
         }
         
-        // delete URL
-        static var delete: String
+        // Newpassword URL
+        static var newpassword: String
         {
-            return BASEURL + "slideshow/delete_slides"
+            return BASEURL + "user/set_new_password"
         }
+        
+        // Newpassword URL
+        static var confirmotp: String
+        {
+            return BASEURL + "user/verify_forgot_password_code"
+        }
+        
     }
     struct SESSION
     {

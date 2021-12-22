@@ -1,0 +1,59 @@
+PODS:
+  - Alamofire (4.9.1)
+  - CropViewController (2.6.0)
+  - ImageScrollView (1.9.3)
+  - IQKeyboardManagerSwift (6.0.4)
+  - PKHUD (5.3.0)
+  - PryntTrimmerView (4.0.2)
+  - SDWebImage (4.4.8):
+    - SDWebImage/Core (= 4.4.8)
+  - SDWebImage/Core (4.4.8)
+  - SteviaLayout (4.7.3)
+  - SwiftyJSON (5.0.1)
+  - VersaPlayer (3.0.2)
+  - YPImagePicker (4.5.0):
+    - PryntTrimmerView (~> 4.0.2)
+    - SteviaLayout (~> 4.7.3)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.0)
+  - CropViewController
+  - ImageScrollView
+  - IQKeyboardManagerSwift (= 6.0.4)
+  - PKHUD (~> 5.0)
+  - PryntTrimmerView
+  - SDWebImage (~> 4.0)
+  - SwiftyJSON
+  - VersaPlayer
+  - YPImagePicker
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - CropViewController
+    - ImageScrollView
+    - IQKeyboardManagerSwift
+    - PKHUD
+    - PryntTrimmerView
+    - SDWebImage
+    - SteviaLayout
+    - SwiftyJSON
+    - VersaPlayer
+    - YPImagePicker
+
+SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
+  CropViewController: 7093b39ec3cb508531b22d35773e06cecd7378d8
+  ImageScrollView: d3ce8371e0d44299b2b638410db45387e18aa83f
+  IQKeyboardManagerSwift: 36dbe324b4f9793f5f41ba5227f3e7c76dfefd50
+  PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
+  PryntTrimmerView: 6a43cc90df5d99addeabd33d4ba09b1365322130
+  SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
+  SteviaLayout: c2ecdcff57d44e38fd2f65e54ad52aeae28ca0c4
+  SwiftyJSON: 2f33a42c6fbc52764d96f13368585094bfd8aa5e
+  VersaPlayer: 0e9a0ea7da786729ffb377dbd17b34641a8265e4
+  YPImagePicker: 6f410f475bd22fa8cd430495b54d4b2f15865c2d
+
+PODFILE CHECKSUM: ab6bd5be0c5c78bcf70624ca47245e60830eb9a1
+
+COCOAPODS: 1.11.2

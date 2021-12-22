@@ -15,9 +15,11 @@ import AVFoundation
 import CoreMedia
 import PryntTrimmerView
 import CropViewController
+import SwiftyJSON
 
 class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,CropViewControllerDelegate {
    
+    @IBOutlet weak var imglogo: UIImageView!
     @IBOutlet weak var collactionalbum: UICollectionView!
     @IBOutlet weak var imgpicker: UIView!
     @IBOutlet weak var drivepicker: UIView!
@@ -60,11 +62,15 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
     private var croppingStyle = CropViewCroppingStyle.default
     private var croppedRect = CGRect.zero
     private var croppedAngle = 0
+    var para = [String: Any]()
   
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        imglogo.layer.cornerRadius = imglogo.frame.height/2
+        imglogo.clipsToBounds = true
+        
         self.playerview.isHidden = true
         self.drivepicker.isHidden = true
         self.imgpicker.isHidden = true
@@ -148,94 +154,13 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
         }
         else
         {
-            ApiCalling()
+            let image = self.loadImageFromDiskWith(fileName: "Tempimg")
+            print("this is save image",image!)
+            newapi(file: image!)
         }
     }
     
-    func ApiCalling()
-    {
-        if Reachability.isConnectedToNetwork() == true
-        {
-            DispatchQueue.main.async
-                {HUD.show(.progress)}
-            let headers = [
-                "authorization": "Bearer \(UserDefaults.standard.string(forKey: Constants.SESSION.token) ?? "")",
-            ]
-            print(headers)
-           
-            let parameters: Parameters = ["slide_id": slideid]
-            print("this is parameters",parameters)
-            Alamofire.upload(multipartFormData: { multipartFormData in
-                
-                let userData = try? JSONSerialization.data(withJSONObject: parameters)
-                
-                multipartFormData.append(userData!, withName: "data[]")
-                
-                for i in 0..<self.arrTempimg.count {
-                    if let dataImages = self.arrTempimg[i].jpegData(compressionQuality: 0.7)
-                    {
-                        multipartFormData.append(dataImages, withName: "files[]", fileName: "\(i).jpg", mimeType: "files/png")
-                    }
-                }
-            },
-            to:"http://techeruditedev.xyz/projects/photo-frame-api/api/slideshow/add_slides", method:.post, headers: headers)
-            { (result) in
-                
-                switch result {
-                case .success(let upload, _, _):
-                    upload.uploadProgress(closure: { (progress) in
-                        print("Upload Progress:", progress.fractionCompleted)
-                    })
-                    upload.responseJSON { response in
-                        print(response.result.value!)
-                        
-                        let responseJSON = response.result.value as! [String:AnyObject]
-                        
-                        let arr = responseJSON["data"] as? Array<Dictionary<String, AnyObject>>
-                        
-                        self.arrdata.removeAll()
-                        for i in arr!
-                        {
-                                let item = i as NSDictionary
-                                let data = getimage()
-                            
-                            data.file_name = item["file_name"] as! String
-                            data.id = (item["id"] as? Int)!
-                            data.file_url = item["file_url"] as! String
-                            data.slideshow_id = item["slideshow_id"] as! Int
-                            data.thumb_url = item["thumb_url"] as! String
-                            data.user_id = item["user_id"] as! Int
-                            data.type = item["type"] as! Int
-                            self.arrdata.append(data)
-                            print("this is an data count",self.arrdata.count)
-                            self.collactionalbum.reloadData()
-                        }
-                        print("sucess")
-                        let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "Albumvc") as!
-                        Albumvc
-                        btnSkip.hasslides = "true"
-                        self.navigationController?.pushViewController(btnSkip,animated:true)
-                    }
-                case .failure(let encodingError):
-                    DispatchQueue.main.async
-                        {HUD.hide()}
-                    
-                    print("fail")
-                }
-            }
-            
-        }
-        else
-        {
-            DispatchQueue.main.async
-                {HUD.hide()}
-            let alert = UIAlertController(title: "Alert", message: "Something Went Wrong! Try Later!", preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    
+
     @IBAction func btnclosepic(_ sender: Any)
     {
         self.viewimg.isHidden = true
@@ -447,7 +372,7 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
     {
         let Data = arrdata[sender.tag]
         slideid = Data.id
-        Apidelete(slideid: slideid)
+        //Apidelete(slideid: slideid)
         DispatchQueue.main.async
         {HUD.show(.progress)}
     }
@@ -458,6 +383,9 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
         let Data3 = arrdata[sender3.tag]
         slideid = Data3.id
         let imgurl = Data3.file_url as? String ?? ""
+        
+        
+        
         self.imageviewurl = imgurl
         self.img.sd_setImage(with: URL(string: imgurl), placeholderImage: UIImage(named: "photo"))
     }
@@ -628,9 +556,10 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
             if cancelled {
                 print("Picker was canceled")
                 
-                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
-                uploadvc
-                self.navigationController?.pushViewController(btnSkip,animated:true)
+//                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
+//                uploadvc
+//                self.navigationController?.pushViewController(btnSkip,animated:true)
+                self.imgpicker.isHidden = true
                 picker.dismiss(animated: true, completion: nil)
                 return
             }
@@ -712,9 +641,10 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
             if cancelled {
                 print("Picker was canceled")
                 
-                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
-                uploadvc
-                self.navigationController?.pushViewController(btnSkip,animated:true)
+//                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
+//                uploadvc
+//                self.navigationController?.pushViewController(btnSkip,animated:true)
+                self.imgpicker.isHidden = true
                 picker.dismiss(animated: true, completion: nil)
                 return
             }
@@ -1065,71 +995,6 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
         }
     }
     
-    
-    func Apidelete(slideid: Int)
-    {
-        
-        let headers = [
-            "authorization": "Bearer \(UserDefaults.standard.string(forKey: Constants.SESSION.token) ?? "")",
-        ]
-        
-        let urlParams = [
-            
-            "slides_id": slideid
-        ]
-        
-        print(urlParams)
-        
-        Alamofire.request(Constants.API.delete,  method: .post, parameters: urlParams, encoding:
-            JSONEncoding.default, headers: headers).responseJSON
-            { (response:DataResponse) in
-                
-                let responseJSON = response.result.value as! NSDictionary
-                print("API Response",responseJSON)
-                let JsonData = responseJSON["data"] as! Array<Dictionary<String,AnyObject>>
-                let message = responseJSON["message"] as! String
-                let Status = responseJSON["status"] as! Bool
-                
-                if Status == true
-                {
-                    print("Login Successfull")
-                   
-                    self.arrdata.removeAll()
-                    for i in JsonData
-                    {
-                            let item = i as NSDictionary
-                            let data = getimage()
-                        
-                        data.file_name = item["file_name"] as! String
-                        data.id = (item["id"] as? Int)!
-                        data.file_url = item["file_url"] as! String
-                        data.slideshow_id = item["slideshow_id"] as! Int
-                        data.thumb_url = item["thumb_url"] as! String
-                        data.user_id = item["user_id"] as! Int
-                        data.type = item["type"] as! Int
-                        self.arrdata.append(data)
-                        print("this is an data count",self.arrdata.count)
-                        self.showToast(message: message , font: .systemFont(ofSize: 10.0))
-                        self.collactionalbum.reloadData()
-                    }
-                }
-                
-                else
-                {
-                    print("Login Failed")
-                 
-                    DispatchQueue.main.async
-                        {HUD.hide()}
-                    
-                    let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertController.Style.alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                    
-                }
-                
-        }
-    }
-    
     //MARK :- crop view
     
     public func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
@@ -1145,6 +1010,7 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
     }
     
     public func updateImageViewWithImage(_ image: UIImage, fromCropViewController cropViewController: CropViewController) {
+        self.arrviewimg.removeAll()
         img.image = image
         //layoutImageView()
         
@@ -1153,13 +1019,15 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
         if cropViewController.croppingStyle != .circular {
             img.isHidden = true
             
+            self.arrviewimg.removeAll()
             cropViewController.dismissAnimatedFrom(self, withCroppedImage: image,
                                                    toView: img,
                                                    toFrame: CGRect.zero,
                                                    setup: { self.viewimg.isHidden = false },
                                                    completion: {
                                                     self.img.isHidden = false })
-            self.arrTempimg.append(image)
+            //self.image = image
+            self.saveImage(imageName: "Tempimg", image: image)
         }
         else {
             self.img.isHidden = false
@@ -1167,6 +1035,134 @@ class Albumvc: UIViewController,UICollectionViewDelegate,UICollectionViewDataSou
         }
     }
     
+    func newapi(file: UIImage)
+    {
+        if Reachability.isConnectedToNetwork() == true
+        {
+            DispatchQueue.main.async
+            {HUD.show(.progress)}
+            
+            let headers = [
+                "authorization": "Bearer \(UserDefaults.standard.string(forKey: Constants.SESSION.token) ?? "")",
+            ]
+            
+            let image = file
+            let imgData = image.jpegData(compressionQuality: 0.2)!
+            
+            let parameters = ["slide_id": String(slideid)] //Optional for extra parameter
+            
+            Alamofire.upload(multipartFormData: { multipartFormData in
+                multipartFormData.append(imgData, withName: "file",fileName: "file.jpg", mimeType: "image/jpg")
+                for (key, value) in parameters {
+                    multipartFormData.append(value.data(using: String.Encoding.utf8)!, withName: key)
+                } //Optional for extra parameters
+            },
+                             to:"http://techeruditedev.xyz/projects/photo-frame-api/api/slideshow/update_existing_slide", method:.post, headers: headers)
+            { (result) in
+                switch result {
+                case .success(let upload, _, _):
+                    
+                    upload.uploadProgress(closure: { (progress) in
+                        print("Upload Progress: \(progress.fractionCompleted)")
+                    })
+                    
+                    upload.responseJSON { response in
+                        print(response.result.value)
+                        
+                        let responseJSON = response.result.value as! [String:AnyObject]
+                        
+                        let arr = responseJSON["data"] as? Array<Dictionary<String, AnyObject>>
+                        
+                        self.arrdata.removeAll()
+                        for i in arr!
+                        {
+                            let item = i as NSDictionary
+                            let data = getimage()
+                            
+                            data.file_name = item["file_name"] as! String
+                            data.id = (item["id"] as? Int)!
+                            data.file_url = item["file_url"] as! String
+                            data.slideshow_id = item["slideshow_id"] as! Int
+                            data.thumb_url = item["thumb_url"] as! String
+                            data.user_id = item["user_id"] as! Int
+                            data.type = item["type"] as! Int
+                            self.arrdata.append(data)
+                            print("this is an data count",self.arrdata.count)
+                            self.viewimg.isHidden = true
+                            self.collactionalbum.reloadData()
+                        }
+                        print("sucess")
+                        
+                    }
+                case .failure(let encodingError):
+                    DispatchQueue.main.async
+                    {HUD.hide()}
+                    
+                    print("fail")
+                }
+                
+            }
+            
+        }
+        else
+        {
+            DispatchQueue.main.async
+            {HUD.hide()}
+            let alert = UIAlertController(title: "Alert", message: "Something Went Wrong! Try Later!", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    
+    func saveImage(imageName: String, image: UIImage) {
+
+
+     guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+
+        let fileName = imageName
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        guard let data = image.jpegData(compressionQuality: 1) else { return }
+
+        //Checks if file exists, removes it if so.
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            do {
+                try FileManager.default.removeItem(atPath: fileURL.path)
+                print("Removed old image")
+            } catch let removeError {
+                print("couldn't remove file at path", removeError)
+            }
+
+        }
+
+        do {
+            try data.write(to: fileURL)
+            
+            print(fileURL)
+            
+        } catch let error {
+            print("error saving file with error", error)
+        }
+
+    }
+
+    
+    func loadImageFromDiskWith(fileName: String) -> UIImage? {
+
+      let documentDirectory = FileManager.SearchPathDirectory.documentDirectory
+
+        let userDomainMask = FileManager.SearchPathDomainMask.userDomainMask
+        let paths = NSSearchPathForDirectoriesInDomains(documentDirectory, userDomainMask, true)
+
+        if let dirPath = paths.first {
+            let imageUrl = URL(fileURLWithPath: dirPath).appendingPathComponent(fileName)
+            let image = UIImage(contentsOfFile: imageUrl.path)
+            return image
+
+        }
+
+        return nil
+    }
     
 }
 
@@ -1179,6 +1175,19 @@ extension Albumvc {
         return CGSize(width: abs(size.width), height: abs(size.height))
     }
 }
+
+extension UIImage {
+    func toPngString() -> String? {
+        let data = self.pngData()
+        return data?.base64EncodedString(options: .endLineWithLineFeed)
+    }
+  
+    func toJpegString(compressionQuality cq: CGFloat) -> String? {
+        let data = self.jpegData(compressionQuality: cq)
+        return data?.base64EncodedString(options: .endLineWithLineFeed)
+    }
+}
+
 
 
 

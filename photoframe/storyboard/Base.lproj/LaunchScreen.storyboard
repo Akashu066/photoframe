@@ -19,18 +19,16 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lCi-H1-gnw">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="7gg-c5-RXY">
-                                        <rect key="frame" x="67" y="269" width="241" height="129"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="241" id="HOU-6G-oVq"/>
-                                            <constraint firstAttribute="height" constant="129" id="coL-CI-99w"/>
-                                        </constraints>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="7gg-c5-RXY">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="7gg-c5-RXY" firstAttribute="centerY" secondItem="lCi-H1-gnw" secondAttribute="centerY" id="MXS-jh-fCS"/>
-                                    <constraint firstItem="7gg-c5-RXY" firstAttribute="centerX" secondItem="lCi-H1-gnw" secondAttribute="centerX" id="THF-Uu-xdd"/>
+                                    <constraint firstAttribute="trailing" secondItem="7gg-c5-RXY" secondAttribute="trailing" id="LfU-51-MpI"/>
+                                    <constraint firstItem="7gg-c5-RXY" firstAttribute="leading" secondItem="lCi-H1-gnw" secondAttribute="leading" id="Vi7-qw-xnG"/>
+                                    <constraint firstItem="7gg-c5-RXY" firstAttribute="top" secondItem="lCi-H1-gnw" secondAttribute="top" id="b7e-PE-lmI"/>
+                                    <constraint firstAttribute="bottom" secondItem="7gg-c5-RXY" secondAttribute="bottom" id="fyx-Ib-4dp"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -50,6 +48,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="logo" width="147" height="162.5"/>
+        <image name="background" width="540" height="540"/>
     </resources>
 </document>

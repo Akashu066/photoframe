@@ -11,6 +11,7 @@ import PKHUD
 
 class verifyemailvc: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var imglogo: UIImageView!
     @IBOutlet weak var resendbutton: UIButton!
     @IBOutlet weak var lbltimer: UILabel!
     @IBOutlet weak var uiview: UIView!
@@ -29,12 +30,18 @@ class verifyemailvc: UIViewController, UITextFieldDelegate {
     
     var comefrom = ""
     var TIMER = Timer()
-    var SECONDS = 30
+    var SECONDS = 60
     var otp = ""
     var email = ""
+    var apipara = ""
+    var url = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        imglogo.layer.cornerRadius = imglogo.frame.height/2
+        imglogo.clipsToBounds = true
         
         setup()
         self.txtotp1.delegate = self
@@ -123,31 +130,92 @@ class verifyemailvc: UIViewController, UITextFieldDelegate {
     
     @IBAction func btnresendotp(_ sender: Any)
     {
-        print("btnresend clicked")
-      
+        resendapicalling()
     }
+    
+    func resendapicalling()
+        {
+            let urlParams = [
+                
+                "email": self.email
+            ]
+            
+            print(urlParams)
+            
+            Alamofire.request(Constants.API.forgot,  method: .post, parameters: urlParams, encoding:
+                JSONEncoding.default, headers: nil).responseJSON
+                { (response:DataResponse) in
+                    
+                    let responseJSON = response.result.value as! NSDictionary
+                    print("API Response",responseJSON)
+                    let JsonData = responseJSON["data"] as! NSDictionary
+                    let message = responseJSON["message"] as! String
+                    let Status = responseJSON["status"] as! Bool
+                    
+                    if Status == true
+                    {
+                        print("Login Successfull")
+                       
+                        DispatchQueue.main.async
+                            {HUD.hide()}
+                        
+                        self.showToast(message: message , font: .systemFont(ofSize: 10.0))
+                    }
+                    
+                    else
+                    {
+                        print("Login Failed")
+                     
+                        DispatchQueue.main.async
+                            {HUD.hide()}
+                        
+                        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertController.Style.alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                        
+                    }
+                    
+            }
+        }
     
     @IBAction func btncontinue(_ sender: Any)
     {
         otp = "\(self.txtotp1.text!)\(self.txtotp2.text!)\(self.txtotp3.text!)\(self.txtotp4.text!)\(self.txtotp5.text!)\(self.txtotp6.text!)"
         otpApi()
+        DispatchQueue.main.async
+        {HUD.show(.progress)}
     }
     
 //    let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "resetpassword") as!
 //    resetpassword
 //    self.navigationController?.pushViewController(btnSkip,animated:true)
     
+  
+    
     func otpApi()
     {
+        
+        if self.comefrom == "forgot"
+        {
+            apipara = "code"
+            url = Constants.API.confirmotp
+        }
+        else
+        {
+            apipara = "verification_code"
+            url = Constants.API.verification
+        }
+        
         let urlParams = [
             
             "email": email,
-            "verification_code": otp
+            apipara: otp
         ]
         
         print(urlParams)
         
-        Alamofire.request(Constants.API.verification,  method: .post, parameters: urlParams, encoding:
+        print(url)
+        Alamofire.request(url,  method: .post, parameters: urlParams, encoding:
             JSONEncoding.default, headers: nil).responseJSON
             { (response:DataResponse) in
                 
@@ -167,14 +235,17 @@ class verifyemailvc: UIViewController, UITextFieldDelegate {
                     
                     if self.comefrom == "forgot"
                     {
-                        let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "loginvc") as!
-                        loginvc
+                        let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "resetpassword") as!
+                        resetpassword
+                        
+                        btnSkip.passwordcode = self.otp
+                        
                         self.navigationController?.pushViewController(btnSkip,animated:true)
                     }
                     else
                     {
-                        let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
-                        uploadvc
+                        let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "loginvc") as!
+                        loginvc
                         self.navigationController?.pushViewController(btnSkip,animated:true)
                     }
                     

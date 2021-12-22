@@ -15,6 +15,7 @@ import PKHUD
 
 class uploadvc: UIViewController {
 
+    @IBOutlet weak var imglogo: UIImageView!
     @IBOutlet weak var imgpicker: UIView!
     @IBOutlet weak var drivepicker: UIView!
     @IBOutlet weak var txtlink: UITextField!
@@ -33,6 +34,10 @@ class uploadvc: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        
+        imglogo.layer.cornerRadius = imglogo.frame.height/2
+        imglogo.clipsToBounds = true
+        
         self.drivepicker.isHidden = true
         self.imgpicker.isHidden = true
         
@@ -249,9 +254,10 @@ class uploadvc: UIViewController {
             if cancelled {
                 print("Picker was canceled")
                 
-                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
-                uploadvc
-                self.navigationController?.pushViewController(btnSkip,animated:true)
+//                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
+//                uploadvc
+//                self.navigationController?.pushViewController(btnSkip,animated:true)
+                self.imgpicker.isHidden = true
                 picker.dismiss(animated: true, completion: nil)
                 return
             }
@@ -331,9 +337,10 @@ class uploadvc: UIViewController {
             if cancelled {
                 print("Picker was canceled")
                 
-                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
-                uploadvc
-                self.navigationController?.pushViewController(btnSkip,animated:true)
+//                let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "uploadvc") as!
+//                uploadvc
+//                self.navigationController?.pushViewController(btnSkip,animated:true)
+                self.imgpicker.isHidden = true
                 picker.dismiss(animated: true, completion: nil)
                 return
             }

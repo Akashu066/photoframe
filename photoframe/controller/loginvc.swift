@@ -12,6 +12,7 @@ import PKHUD
 class loginvc: UIViewController {
     
     var verified = Bool()
+    @IBOutlet weak var imglogo: UIImageView!
     @IBOutlet weak var emailview: UIView!
     @IBOutlet weak var uiview: UIView!
     @IBOutlet weak var passwordview: UIView!
@@ -21,6 +22,10 @@ class loginvc: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //841893
+        imglogo.layer.cornerRadius = imglogo.frame.height/2
+        imglogo.clipsToBounds = true
+        
         self.uiview.roundCorners(corners: [.topLeft, .topRight], radius: 55)
         
         self.emailview.layer.cornerRadius = 25

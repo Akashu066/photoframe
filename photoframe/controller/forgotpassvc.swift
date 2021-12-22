@@ -11,12 +11,18 @@ import Alamofire
 
 class forgotpassvc: UIViewController {
 
+    @IBOutlet weak var imglogo: UIImageView!
     @IBOutlet weak var emailview: UIView!
     @IBOutlet weak var uiview: UIView!
     @IBOutlet weak var txtemail: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
+        imglogo.layer.cornerRadius = imglogo.frame.height/2
+        imglogo.clipsToBounds = true
         
         self.uiview.roundCorners(corners: [.topLeft, .topRight], radius: 55)
         
@@ -67,6 +73,9 @@ class forgotpassvc: UIViewController {
                 {
                     print("Login Successfull")
                    
+                    DispatchQueue.main.async
+                        {HUD.hide()}
+                    
                     self.showToast(message: message , font: .systemFont(ofSize: 10.0))
                     
                     let btnSkip = self.storyboard?.instantiateViewController(withIdentifier: "verifyemailvc") as!

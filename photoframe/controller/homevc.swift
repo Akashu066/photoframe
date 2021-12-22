@@ -11,6 +11,7 @@ import PKHUD
 
 class homevc: UIViewController,UITextFieldDelegate {
 
+    @IBOutlet weak var imglogo: UIImageView!
     @IBOutlet weak var logincodeview: UIView!
     @IBOutlet weak var btnlogin: UIButton!
     @IBOutlet weak var loginwithview: UIView!
@@ -35,6 +36,10 @@ class homevc: UIViewController,UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        
+        imglogo.layer.cornerRadius = imglogo.frame.height/2
+        imglogo.clipsToBounds = true
         
         self.logincodeview.isHidden = true
         btnlogin.isHidden = true
